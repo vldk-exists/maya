@@ -7,13 +7,13 @@ T = TypeVar('T')
 
 class Response:
     """
-    Класс, представляющий HTTP-ответ. Инкапсулирует версию, статус, заголовки и тело ответа.
+    A class representing an HTTP response. Encapsulates version, status, headers, and body of the response.
 
-    Атрибуты:
-        version (str): HTTP-версия (по умолчанию "HTTP/1.1").
-        status (int): HTTP-статус код (по умолчанию 200).
-        headers (Optional[List[Tuple[str, T]]]): Заголовки HTTP как список кортежей, где каждый кортеж состоит из имени заголовка и его значения.
-        body (str): Тело HTTP-ответа (например, HTML, JSON).
+    Attributes:
+        version (str): The HTTP version (default is "HTTP/1.1").
+        status (int): The HTTP status code (default is 200).
+        headers (Optional[List[Tuple[str, T]]]): The HTTP headers as a list of tuples, where each tuple contains a header name and its value.
+        body (str): The body of the HTTP response (e.g., HTML, JSON).
     """
     DEFAULT_VERSION = "HTTP/1.1"  # Стандартная версия HTTP
     DEFAULT_STATUS = 200  # Стандартный статус HTTP (ОК)
@@ -24,12 +24,12 @@ class Response:
                  status:int = DEFAULT_STATUS,
                  body:Optional[Union[str, bytes]] = None):
         """
-        Инициализация объекта Response.
+        Initializes the Response object.
 
-        :param headers: Список HTTP-заголовков. По умолчанию None.
-        :param version: Версия HTTP. По умолчанию "HTTP/1.1".
-        :param status: Код HTTP-статуса. По умолчанию 200.
-        :param body: Тело HTTP-ответа. По умолчанию None.
+        :param headers: A list of HTTP headers. Default is None.
+        :param version: The HTTP version. Default is "HTTP/1.1".
+        :param status: The HTTP status code. Default is 200.
+        :param body: The body of the HTTP response. Default is None.
         """
         self.version = version
         self.status = status or (self.EMPTY_BODY_STATUS if not body else self.DEFAULT_STATUS)
@@ -38,7 +38,7 @@ class Response:
 
     def render_response(self):
         """
-        Генерирует HTTP-ответ в виде строки.
+         Generates the HTTP response as a string.
         """
         response = f"{self.version} {self.status}\r\n"
         for header, value in self.headers:
@@ -60,13 +60,13 @@ class Response:
 
 def render_template(page_path, status: int = Response.DEFAULT_STATUS, cookies: List[Cookie] = None, loader:str = None, **kwargs):
     """
-    Генерирует HTML-страницу из шаблона, используя переданный контекст и cookies.
+    Generates an HTML page from a template, using the provided context and cookies.
 
-    :param page_path: Путь к файлу HTML-шаблона.
-    :param status: Код статуса HTTP. По умолчанию 200.
-    :param cookies: Список cookies, которые нужно установить в ответе. По умолчанию None.
-    :param kwargs: Произвольные аргументы, которые будут переданы в шаблон для рендеринга.
-    :param loader: Путь по которому будут импортироваться файлы(для работы Jinja2)
+    :param page_path: The path to the HTML template file.
+    :param status: The HTTP status code. Default is 200.
+    :param cookies: A list of cookies to set in the response. Default is None.
+    :param kwargs: Arbitrary arguments to be passed to the template for rendering.
+    :param loader: The path from which files will be imported (for Jinja2 usage).
     """
     with open(page_path, "r", encoding="utf-8") as html_document:
         html_document = Environment(loader=BaseLoader() if not loader else FileSystemLoader(loader)).from_string(html_document.read()).render(**kwargs)
@@ -87,13 +87,13 @@ def render_template(page_path, status: int = Response.DEFAULT_STATUS, cookies: L
 
 def render_from_string(html_string, status: int = Response.DEFAULT_STATUS, cookies: List[Cookie] = None, loader:str = None, **kwargs):
     """
-    Генерирует HTML-страницу из строки, используя переданный контекст и cookies.
+    Generates an HTML page from a string, using the provided context and cookies.
 
-    :param html_string: HTML-контент в виде строки.
-    :param status: Код статуса HTTP. По умолчанию 200.
-    :param cookies: Список cookies, которые нужно установить в ответе. По умолчанию None.
-    :param kwargs: Произвольные аргументы, которые будут переданы в шаблон для рендеринга.
-    :param loader: Путь по которому будут импортироваться файлы(для работы Jinja2)
+    :param html_string: HTML content as a string.
+    :param status: The HTTP status code. Default is 200.
+    :param cookies: A list of cookies to set in the response. Default is None.
+    :param kwargs: Arbitrary arguments to be passed to the template for rendering.
+    :param loader: The path from which files will be imported (for Jinja2 usage).
     """
     html_document = Environment(loader=BaseLoader() if not loader else FileSystemLoader(loader)).from_string(html_string).render(**kwargs)
     content_length = len(html_document)
@@ -113,10 +113,10 @@ def render_from_string(html_string, status: int = Response.DEFAULT_STATUS, cooki
 
 def redirect(location, cookies: List[Cookie] = None):
     """
-    Генерирует ответ для перенаправления на указанный адрес.
+    Generates a response for redirecting to the specified URL.
 
-    :param location: URL, на который нужно выполнить перенаправление.
-    :param cookies: Список cookies, которые нужно установить в ответе. По умолчанию None.
+    :param location: The URL to which the redirection should occur.
+    :param cookies: A list of cookies to set in the response. Default is None.
     """
     status = 302
     headers = [
@@ -132,11 +132,11 @@ def redirect(location, cookies: List[Cookie] = None):
 
 def render_json(json_data, status: int = Response.DEFAULT_STATUS, cookies: List[Cookie] = None):
     """
-    Генерирует JSON-ответ в HTTP-ответе.
+    Generates a JSON response in the HTTP response.
 
-    :param json_data: Данные в формате JSON, которые будут включены в тело ответа.
-    :param status: Код статуса HTTP. По умолчанию 200.
-    :param cookies: Список cookies, которые нужно установить в ответе. По умолчанию None.
+    :param json_data: The JSON data to be included in the response body.
+    :param status: The HTTP status code. Default is 200.
+    :param cookies: A list of cookies to set in the response. Default is None.
     """
     json_data = json.dumps(json_data, ensure_ascii=False)
     content_length = len(json_data)
@@ -156,11 +156,11 @@ def render_json(json_data, status: int = Response.DEFAULT_STATUS, cookies: List[
 
 def render_http_message(data, status:int = Response.DEFAULT_STATUS, cookies: List[Cookie] = None):
     """
-    Генерирует HTTP-сообщение в теле ответа.
+    Generates an HTTP message in the response body.
 
-    :param data: Сырые данные HTTP-сообщения, которые будут включены в тело.
-    :param status: Код статуса HTTP. По умолчанию 200.
-    :param cookies: Список cookies, которые нужно установить в ответе. По умолчанию None.
+    :param data: Raw HTTP message data to be included in the body.
+    :param status: The HTTP status code. Default is 200.
+    :param cookies: A list of cookies to set in the response. Default is None.
     """
     content_length = len(data)
     headers = [

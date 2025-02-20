@@ -17,7 +17,7 @@ from .request import Request
 from .response import render_from_string, render_http_message
 from .response import Response
 
-# Статус коды и сообщения которые они отображают по умолчанию
+# Status codes and the messages they display by default
 STATUS_CODES = {
     100: 'Continue',
     101: 'Switching Protocols',
@@ -72,36 +72,37 @@ STATUS_CODES = {
 
 class ServerSocket:
     """
-    Класс для создания и управления сокетом сервера.
+    A class for creating and managing a server socket.
 
-    Атрибуты:
-        socket (socket): Сокет IPv4, TCP(с заранее подготовленным биндом).
+    Attributes:
+        socket (socket): An IPv4, TCP socket (pre-bound).
 
-    Методы:
-        listen(): Начинает слущать входящие соединения.
+    Methods:
+        listen(): Starts listening for incoming connections.
     """
     def __init__(self, addr:str = "127.0.0.1", port:int = 80):
         """
-        Инициализирует новый совет IPv4, TCP и биндит его.
+        Initializes a new IPv4, TCP socket and binds it.
 
-        :param addr: Адрес сокета, по умолчанию "127.0.0.1".
-        :param port: Порт сокета(Число от 1 до 65537), по умолчанию 80.
+        :param addr: The socket address, default is "127.0.0.1".
+        :param port: The socket port (a number from 1 to 65537), default is 80.
         """
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.bind((addr, port))
 
     def listen(self, max_connections:int = socket.SOMAXCONN):
         """
-        Начинает слушать входящие соединения.
+        Starts listening for incoming connections.
 
-        :param max_connections: Максимальное колличество соединение которое может обработать за раз сокет, по умолчанию равен socket.SOMAXCONN .
+        :param max_connections: The maximum number of connections the socket can handle at a time,
+                                defaults to socket.SOMAXCONN.
         """
         self.socket.listen(max_connections)
         return self.socket
 
 class String:
     """
-    Класс-обёртка для строк, запрещает использование символа '/'.
+    A wrapper class for strings that disallows the use of the '/' character.
     """
     def __init__(self, string: str):
         self.string = html.escape(string)
@@ -112,7 +113,7 @@ class String:
 
 class Path:
     """
-    Класс для представления пути, требует наличие символа '/'.
+    A class for representing a path, requiring the presence of the '/' character.
     """
     def __init__(self, path: str):
         if not path.startswith("/"):
@@ -136,7 +137,7 @@ class UUID:
     def __str__(self):
         return str(self.uuid)
 
-# Типы данных для удобного использования в парсинге динамических ссылок
+# Data types for convenient use in parsing dynamic links
 types = {
     "int": int,
     "String": String,
@@ -147,9 +148,9 @@ types = {
 
 def check_if_template(path):
     """
-    Проверяет, содержит ли URL шаблонный параметр вида <type:name>.
+    Checks if the URL contains a template parameter in the form <type:name>.
 
-    :param path: Путь который нужно проверить на наличие динамических параметров.
+    :param path: The path to check for dynamic parameters.
     """
     pattern = r"<([a-zA-Z_]+):([a-zA-Z_]+)>"
     match = re.search(pattern, path)
@@ -158,10 +159,10 @@ def check_if_template(path):
 
 def check_if_dynamic_parameters(path, template):
     """
-    Проверяет, соответствует ли URL шаблону с динамическими параметрами.
+    Checks if the URL matches the template with dynamic parameters.
 
-    :param path: Путь который нужно проверить на сходство с шаблоном template.
-    :param template: Шаблон.
+    :param path: The path to check for similarity with the template.
+    :param template: The template.
     """
     regex_pattern = "^" + re.sub(
         r"<([a-zA-Z_]+):([a-zA-Z_]+)>",
@@ -173,10 +174,10 @@ def check_if_dynamic_parameters(path, template):
 
 def parse_dynamic_parameters(match, template):
     """
-    Извлекает параметры из динамического URL и приводит их к нужным типам.
+    Extracts parameters from a dynamic URL and converts them to the required types.
 
-    :param match: Результат функции chech_if_dynamic_parameters.
-    :param template: Шаблон который задаёт правила парсинга первого параметра.
+    :param match: The result of the function check_if_dynamic_parameters.
+    :param template: The template that defines the parsing rules for the first parameter.
     """
     params = match.groupdict()
     parsed_params = {}
@@ -192,9 +193,9 @@ def parse_dynamic_parameters(match, template):
 
 def read_request(conn):
     """
-    Считывает HTTP-запрос от клиента, поддерживает обработку тела запроса.
+    Reads an HTTP request from the client, supports processing of the request body.
 
-    :param conn: Соиденённый сокет с сокетом клиента который должен получить информацию о запросе.
+    :param conn: The connected socket with the client socket that should receive information about the request.
     """
     buffer_size = 1024
     request_bytes = b""
@@ -225,7 +226,7 @@ def read_request(conn):
 # Ошибки для удобной обработки событий
 class BadRequest(Exception):
     """
-    Ошибка которая появляеться во время некоректного клиент-запроса(используеться исключительно для обработки собитый)
+    An error that occurs during an incorrect client request (used exclusively for event handling).
     """
     def __init__(self):
         self.message = "Bad Request"
@@ -233,10 +234,10 @@ class BadRequest(Exception):
 
 class IntenralServerError(Exception):
     """
-    Ошибка которая появляеться во время ошибки сервера(используеться исключительно для обработки собитый)
+    An error that occurs during a server error (used exclusively for event handling).
 
-    Аттрибуты:
-        e (Exception): Ошибка которая и вызвала InternalServerError
+    Attributes:
+        e (Exception): The error that caused the InternalServerError.
     """
     def __init__(self, e: Exception):
         self.e = e
@@ -245,31 +246,28 @@ class IntenralServerError(Exception):
 
 class PrematureResponse(Exception):
     """
-    Ошибка которая говорит о преждевременном возврате ответа сервера(используеться исключительно для обработки собитый)
+    An error that indicates a premature return of the server's response (used exclusively for event handling).
 
-    Аттрибуты:
-        r (Response): ответ сервера
+    Attributes:
+        r (Response): The server's response.
     """
     def __init__(self, r: Response):
         self.r = r
         self.message = "Premature Return Of Response"
         super().__init__(self.message)
 
-from flask import Flask
-
 class WebServer:
     """
-    Основной класс веб-сервера. Управляет обработчиками маршрутов и запросами.
+    The main class of the web server. Manages route handlers and requests.
 
-    Методы:
-        run(addr:str = "127.0.0.1", port:int = 80, debug: bool = False): Запускает сервер на указанном адресе и порту.
-        handle_request(conn, addr, debug): Обрабатывает входящий HTTP-запрос, вызывает соответствующий обработчик.
-        before_request(f: Callable): Добавляет обработчик в очередь обработчиков что выполняються до запроса.
-        after_request(f: Callable): Добавляет обработчик в очередь обработчиков что выполняються после запроса.
-        add_route(path: str, handler: Callable): Добавляет обработчик и путь что он обрабатывает в словарь маршрутизации.
-        add_status_handler(status_code: int, handler: Callable): Добавляет обработчик и статус код что он обрабатывает в словарь маршрутизации статус кодов.
-        add_status_handler(status_code: int, handler: Callable): Добавляет обработчик и статус код что он обрабатывает в словарь маршрутизации.
-        add_static_file(path): Добавляет обработчик для статического файла что он отправляет, в словарь маршрутизации.
+    Methods:
+        run(addr: str = "127.0.0.1", port: int = 80, debug: bool = False): Starts the server on the specified address and port.
+        handle_request(conn, addr, debug): Handles an incoming HTTP request, calls the appropriate handler.
+        before_request(f: Callable): Adds a handler to the queue of handlers that run before the request.
+        after_request(f: Callable): Adds a handler to the queue of handlers that run after the request.
+        add_route(path: str, handler: Callable): Adds a handler and the path it handles to the routing dictionary.
+        add_status_handler(status_code: int, handler: Callable): Adds a handler and the status code it handles to the routing dictionary of status codes.
+        add_static_file(path): Adds a handler for the static file it serves to the routing dictionary.
     """
     __before_request: Set[Callable] = set()
     __after_request: Set[Callable] = set()
@@ -307,11 +305,11 @@ class WebServer:
 
     def run(self, addr:str = "127.0.0.1", port:int = 80, debug:bool = False):
         """
-        Запускает сервер на указанном адресе и порту.
+        Starts the server on the specified address and port.
 
-        :param addr: Адрес веб-сервера.
-        :param port: Порт веб-сервера.
-        :param debug: Режим дебаггинга.
+        :param addr: The address of the web server.
+        :param port: The port of the web server.
+        :param debug: Debugging mode.
         """
         if not (1 <= port <= 65535):
             raise ValueError("Port must be in diapason from 1 to 65535")
@@ -320,12 +318,12 @@ class WebServer:
 
         if not self.__url_patterns:
             print(Fore.YELLOW + "WARNING:")
-            print("Сервер не нашёл обработчиков. Каждая ссылка будет сопровождаться 404 статусом. Пожайлуста добавьте обработчиков через .set_url_patterns(...)" + Fore.RESET)
+            print("Server could not find any handlers. Each link will be accompanied by a 404 status. Please add handlers using .set_url_patterns(...)." + Fore.RESET)
 
-        print(Fore.GREEN+ f"Сервер запущен и доступен здесь - http://{addr}:{port}" + Fore.RESET)
+        print(Fore.GREEN+ f"Server is running and accessible at http://{addr}:{port}" + Fore.RESET)
         if debug:
-            print(Fore.BLUE+ "Debug режим включён" + Fore.RESET)
-        print(Fore.RED + "Ctrl + C -> Чтобы остановить работу сервера\n" + Fore.RESET)
+            print(Fore.BLUE + "Debug mode is enabled" + Fore.RESET)
+        print(Fore.RED + "Ctrl + C -> To stop the server\n" + Fore.RESET)
 
         try:
             while self.__is_running:
@@ -338,7 +336,7 @@ class WebServer:
                     continue
 
         except KeyboardInterrupt:
-            print(Fore.RED + "Сервер отключён" + Fore.RESET)
+            print(Fore.RED + "The server is shut down" + Fore.RESET)
             self.__is_running = False
         finally:
             serversocket.close()
@@ -351,11 +349,11 @@ class WebServer:
 
     def __handle_request(self, conn, addr, debug):
         """
-        Обрабатывает входящий HTTP-запрос, вызывает соответствующий обработчик.
+        Handles the incoming HTTP request, calls the corresponding handler.
 
-        :param conn: Соиденённый сокет с сокетом клиента который должен получить информацию о запросе.
-        :param addr: Адрес и порт сокета.
-        :param debug: Режим дебаггинга.
+        :param conn: The connected socket with the client socket that should receive information about the request.
+        :param addr: The address and port of the socket.
+        :param debug: Debugging mode.
         """
 
         try:
@@ -464,5 +462,3 @@ class WebServer:
                    f"[{datetime.now().strftime('%d/%m/%Y %H:%M:%S')}] {addr[0]}: '?' ? -> {status_code}") +
                   Fore.RESET)
         conn.close()
-
-    # TODO: Обновить докстринги, зделать их более подробными и вставить примеры кода для наглядности

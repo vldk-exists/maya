@@ -3,7 +3,7 @@ import html
 import json
 import re
 
-# Списки MIME-типов, используемых для определения типа содержимого запроса
+# Lists of MIME types used to determine the content type of a request
 BYTES_DATA = ("application/pdf",
               "application/msword",
               "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -47,9 +47,9 @@ JSON_DATA = ("application/json",
 
 def parse_form_data(body: bytes):
     """
-    Парсит данные формы (application/x-www-form-urlencoded) из тела запроса.
+    Parses form data (application/x-www-form-urlencoded) from the request body.
 
-    :param body: Бинарные данные о теле запроса
+    :param body: Binary data of the request body.
     """
     body_content = urllib.parse.parse_qs(body.decode())
     return {
@@ -60,9 +60,9 @@ def parse_form_data(body: bytes):
 
 def parse_json_data(body: bytes):
     """
-    Парсит JSON-данные из тела запроса. Поддерживает JSON Lines.
+    Parses JSON data from the request body. Supports JSON Lines.
 
-    :param body: Бинарные данные о теле запроса
+    :param body: Binary data of the request body.
     """
     body = body.decode()
     try:
@@ -72,17 +72,17 @@ def parse_json_data(body: bytes):
 
 def parse_multipart_formdata(body:bytes, boundary: bytes):
     """
-    Парсит multipart/form-data запрос, обрабатывая вложенные данные.
+    Parses a multipart/form-data request, handling the nested data.
 
-    :param body: Бинарные данные о теле запроса
-    :param boundary: Бинарные данные о границе мульти-формы
+    :param body: Binary data of the request body.
+    :param boundary: Binary data of the multipart boundary.
     """
     result = {}
     parts = body.split(b"--" + boundary)
 
     for part in parts:
         part = part.strip()
-        if not part or part == b'--':  # Skip empty or closing boundary
+        if not part or part == b'--':
             continue
 
         headers, _, content = part.partition(b"\r\n\r\n")
@@ -116,9 +116,9 @@ def parse_multipart_formdata(body:bytes, boundary: bytes):
 
 def parse_query_params(path):
     """
-    Извлекает параметры запроса из URL.
+    Extracts query parameters from the URL.
 
-    :param path: Путь из которого нужно извлечь параметры
+    :param path: The path from which to extract parameters.
     """
     parsed_path = urllib.parse.urlparse(path)
 
@@ -129,17 +129,17 @@ def parse_query_params(path):
 
 def parse_cookies(value: str):
     """
-    Разбирает строку cookie в список кортежей (ключ, значение).
+    Parses a cookie string into a list of tuples (key, value).
 
-    :param value: Строка cookie
+    :param value: The cookie string.
     """
     return [cookie.split("=", 1) for cookie in value.split("; ")]
 
 def parse_request(request_bytes: bytes):
     """
-    Разбирает HTTP-запрос на составные части: метод, заголовки, путь, тело и параметры.
+    Parses the HTTP request into its components: method, headers, path, body, and parameters.
 
-    :param request_bytes: Бинарные данные о теле запроса
+    :param request_bytes: Binary data of the request body.
     """
     headers, body = (request_bytes.split(b"\r\n\r\n", 1))
     headers = headers.decode()
@@ -193,21 +193,22 @@ def parse_request(request_bytes: bytes):
 
 class Request:
     """
-    Класс, представляющий HTTP-запрос.
+    A class representing an HTTP request.
 
-    Атрибуты:
-        method (str): HTTP-метод запроса (например, 'GET', 'POST').
-        path (str): Путь к ресурсу, запрашиваемому в запросе.
-        version (str): Версия HTTP-протокола.
-        headers (dict): Заголовки запроса.
-        args (dict): Параметры строки запроса (query parameters).
-        body (str): Тело запроса, если оно присутствует.
+    Attributes:
+        method (str): The HTTP method of the request (e.g., 'GET', 'POST').
+        path (str): The path to the resource being requested.
+        version (str): The version of the HTTP protocol.
+        headers (dict): The headers of the request.
+        args (dict): The query parameters of the request.
+        body (str): The body of the request, if present.
 
-    Параметры конструктора:
-        request_bytes (bytes): HTTP-запрос в виде байтов, который будет разобран.
+    Constructor parameters:
+        request_bytes (bytes): The HTTP request in byte form to be parsed.
     """
+
     def __init__(self, request_bytes):
-        """Инициализирует объект запроса, разбирая переданный HTTP-запрос в байтах."""
+        """Initializes the request object by parsing the provided HTTP request in bytes."""
         self.__bytes_data = request_bytes
         self.__data = parse_request(request_bytes)
         self.method = self.__data["method"]
@@ -218,9 +219,9 @@ class Request:
         self.body = self.__data["body"]
 
     def __bytes__(self):
-        """Возвращает байтовое представление запроса."""
+        """Returns the byte representation of the request."""
         return self.__bytes_data
 
     def __dict__(self):
-        """Возвращает словарное представление запроса."""
+        """Returns the dictionary representation of the request."""
         return self.__data
