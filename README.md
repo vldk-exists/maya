@@ -32,12 +32,12 @@ pip install maya
 Here's a basic example of how to use Maya:
 
 ```python
-from maya import WebServer, Response
+from maya import WebServer, render_from_string
 
 app = WebServer()
 
 def home():
-    return Response("Hello, world!")
+    return render_from_string("Hello, world!")
 
 app.add_route('/', home)
 
