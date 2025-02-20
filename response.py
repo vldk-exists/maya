@@ -15,9 +15,9 @@ class Response:
         headers (Optional[List[Tuple[str, T]]]): The HTTP headers as a list of tuples, where each tuple contains a header name and its value.
         body (str): The body of the HTTP response (e.g., HTML, JSON).
     """
-    DEFAULT_VERSION = "HTTP/1.1"  # Стандартная версия HTTP
-    DEFAULT_STATUS = 200  # Стандартный статус HTTP (ОК)
-    EMPTY_BODY_STATUS = 204 # Статус код при пустом теле ответа (No Content)
+    DEFAULT_VERSION = "HTTP/1.1"  # The standard version of HTTP
+    DEFAULT_STATUS = 200  # Standard HTTP status (OK)
+    EMPTY_BODY_STATUS = 204 # Status code for an empty response body (No Content)
     def __init__(self,
                  headers:Optional[List[Tuple[str, T]]] = None,
                  version:str = DEFAULT_VERSION,
