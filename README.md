@@ -21,10 +21,10 @@ git clone https://github.com/Vladislavus1/Maya.git
 cd maya
 ```
 
-Alternatively, if this package is published on PyPI(*will be published soon*):
+Alternatively, if this package is published on PyPI:
 
 ```bash
-pip install maya
+pip install maya-framework
 ```
 
 ## Usage
