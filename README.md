@@ -1,4 +1,4 @@
-# Maya
+# [Maya](https://pypi.org/project/maya-framework/)
 
 ![Maya Logo](https://static.wikia.nocookie.net/azumanga/images/3/3f/Maya.jpg)
 
