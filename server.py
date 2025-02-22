@@ -1,4 +1,3 @@
-# Импорты
 import threading
 import sys
 import traceback
