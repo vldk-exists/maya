@@ -21,12 +21,6 @@ git clone https://github.com/Vladislavus1/Maya.git
 cd maya
 ```
 
-Alternatively, if this package is published on PyPI:
-
-```bash
-pip install web_maya
-```
-
 ## Usage
 
 Here's a basic example of how to use Maya:
