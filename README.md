@@ -1,4 +1,4 @@
-# [Maya](https://pypi.org/project/maya-framework/)
+# [Maya](https://pypi.org/project/web_maya/)
 
 ![Maya Logo](https://static.wikia.nocookie.net/azumanga/images/3/3f/Maya.jpg)
 
@@ -24,7 +24,7 @@ cd maya
 Alternatively, if this package is published on PyPI:
 
 ```bash
-pip install maya-framework
+pip install web_maya
 ```
 
 ## Usage
@@ -32,7 +32,7 @@ pip install maya-framework
 Here's a basic example of how to use Maya:
 
 ```python
-from maya import WebServer, render_from_string
+from web_maya import WebServer, render_from_string
 
 app = WebServer()
 
