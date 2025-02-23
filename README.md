@@ -16,9 +16,7 @@ Maya is a lightweight Python package for handling HTTP requests, responses, and 
 To install Maya, simply clone the repository and use it in your project:
 
 ```bash
-# Clone the repository
 git clone https://github.com/Vladislavus1/Maya.git
-cd maya
 ```
 
 ## Usage
@@ -26,7 +24,7 @@ cd maya
 Here's a basic example of how to use Maya:
 
 ```python
-from web_maya import WebServer, render_from_string
+from maya import WebServer, render_from_string
 
 app = WebServer()
 
