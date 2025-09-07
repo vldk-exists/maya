@@ -222,7 +222,7 @@ def read_request(conn):
 
     return headers + b"\r\n\r\n" + body
 
-# Ошибки для удобной обработки событий
+# Exceptions for comfortable event handling
 class BadRequest(Exception):
     """
     An error that occurs during an incorrect client request (used exclusively for event handling).
